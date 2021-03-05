@@ -20,11 +20,13 @@ defmodule Ockam.Node do
   @ping <<0>>
   @pong <<1>>
 
+  @spec process_registry :: Ockam.Node.Registry
   @doc """
   Returns the process registry for this node.
   """
   def process_registry, do: Registry
 
+  @spec whereis(any) :: nil | pid
   @doc """
   Returns the `pid` of registered address, or `nil`.
   """
@@ -35,16 +37,19 @@ defmodule Ockam.Node do
     end
   end
 
+  @spec register_address(any, any) :: :no | :yes
   @doc """
   Registers the address of a `pid`.
   """
   defdelegate register_address(address, pid), to: Registry, as: :register_name
 
+  @spec unregister_address(any) :: :ok
   @doc """
   Unregisters an address.
   """
   defdelegate unregister_address(address), to: Registry, as: :unregister_name
 
+  @spec send(any, any) :: any
   @doc """
   Send a message to the process registered with an address.
   """
@@ -56,6 +61,7 @@ defmodule Ockam.Node do
     end
   end
 
+  @spec get_random_unregistered_address(non_neg_integer) :: binary
   @doc """
   Returns a random address that is currently not registed on the node.
   """
@@ -105,6 +111,7 @@ defmodule Ockam.Node do
     end
   end
 
+  @spec handle_routed_message(map) :: any
   def handle_routed_message(message) do
     metadata = %{message: message}
 
@@ -120,6 +127,7 @@ defmodule Ockam.Node do
     return_value
   end
 
+  @spec route_message(map()) :: any
   def route_message(message) do
     onward_route = Message.onward_route(message)
 
@@ -127,10 +135,10 @@ defmodule Ockam.Node do
       [] -> handle_control_message(message)
       [{0, <<_::8, _::8, rest::binary>>} | _rest] -> __MODULE__.send(rest, message)
       [first | _rest] -> __MODULE__.send(first, message)
-      unexpected_onward_route -> {:error, {:unexpected_onward_route, unexpected_onward_route}}
     end
   end
 
+  @spec handle_control_message(any) :: :ok | {:error, any}
   def handle_control_message(message) do
     return_route = Message.return_route(message)
     payload = Message.payload(message)

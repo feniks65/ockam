@@ -13,9 +13,10 @@ defmodule Ockam do
   #
   @doc false
   def start(_type, _args) do
-    if Code.ensure_loaded?(:telemetry) do
-      {:ok, _apps} = Application.ensure_all_started(:telemetry)
-    end
+    _ensure_telemetry_started =
+      if Code.ensure_loaded?(:telemetry) do
+        {:ok, _apps} = Application.ensure_all_started(:telemetry)
+      end
 
     # Specifications of child processes that will be started and supervised.
     #

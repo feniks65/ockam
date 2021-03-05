@@ -8,11 +8,11 @@ defprotocol Ockam.Message do
   @fallback_to_any true
 
   @doc "Returns the onward_route of a message."
-  @spec onward_route(t()) :: [Address.t()]
+  @spec onward_route(t()) :: list()
   def onward_route(message)
 
   @doc "Returns the return_route of a message."
-  @spec return_route(t()) :: [Address.t()]
+  @spec return_route(t()) :: list()
   def return_route(message)
 
   @doc "Returns the payload of a message."
@@ -25,7 +25,9 @@ defimpl Ockam.Message, for: Any do
   @moduledoc false
 
   # if the message is a map that has an onward_route field with a list value, use it.
-  def onward_route(%{onward_route: onward_route}) when is_list(onward_route), do: onward_route
+  @spec onward_route(%{required(:onward_route) => list()}) :: list()
+  def onward_route(%{onward_route: onward_route}) when is_list(onward_route),
+    do: onward_route
 
   # for any other message, that does not implement Ockam.Message, assume onward_route is empty.
   def onward_route(_message), do: []
@@ -37,6 +39,7 @@ defimpl Ockam.Message, for: Any do
   def return_route(_message), do: []
 
   # if the message is a map that has an payload field, use it.
+  @spec payload(%{required(:payload) => any()}) :: any()
   def payload(%{payload: payload}), do: payload
 
   # for any other message, that does not implement Ockam.Message, assume the message is the payload.

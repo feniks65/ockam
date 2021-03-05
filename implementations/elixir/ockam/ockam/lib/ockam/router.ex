@@ -99,6 +99,11 @@ defmodule Ockam.Router do
     Storage.delete({:address_type_message_handler, address_type})
   end
 
+  @spec child_spec(any) :: %{
+          id: Ockam.Router,
+          start: {Ockam.Router, :start_link, [...]},
+          type: :worker
+        }
   @doc false
   # Returns a specification to start this module under a supervisor. When this
   # module is added to a supervisor, the supervisor calls child_spec to figure
@@ -110,6 +115,7 @@ defmodule Ockam.Router do
     %{id: __MODULE__, type: :worker, start: {__MODULE__, :start_link, [options]}}
   end
 
+  @spec start_link(any) :: {:error, any} | {:ok, pid}
   @doc false
   # Starts the router and links it to the current process.
   def start_link(options) do

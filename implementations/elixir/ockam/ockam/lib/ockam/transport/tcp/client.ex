@@ -6,7 +6,7 @@ defmodule Ockam.Transport.TCP.Client do
   def init(%{ip: ip, port: port} = state) do
     # TODO: connect/3 and controlling_process/2 should be in a callback.
     {:ok, socket} = :gen_tcp.connect(ip, port, [:binary, :inet, active: true, packet: 2])
-    :gen_tcp.controlling_process(socket, self())
+    _ = :gen_tcp.controlling_process(socket, self())
 
     {:ok, Map.put(state, :socket, socket)}
   end
@@ -19,8 +19,8 @@ defmodule Ockam.Transport.TCP.Client do
   @impl true
   def handle_info(:connect, %{ip: ip, port: port} = state) do
     {:ok, socket} = :gen_tcp.connect(ip, port, [:binary, :inet, {:active, true}, {:packet, 2}])
-    :inet.setopts(socket, [{:packet, 2}])
-    :gen_tcp.controlling_process(socket, self())
+    _ = :inet.setopts(socket, [{:packet, 2}])
+    _ = :gen_tcp.controlling_process(socket, self())
 
     {:noreply, Map.put(state, :socket, socket)}
   end
@@ -33,7 +33,7 @@ defmodule Ockam.Transport.TCP.Client do
   def handle_info({:tcp_error, _}, state), do: {:stop, :normal, state}
 
   @impl true
-  def handle_call({:send, data}, _from, %{socket: socket} = state) do
+  def handle_call({:send, data}, _, %{socket: socket} = state) do
     {:reply, :gen_tcp.send(socket, data), state}
   end
 
