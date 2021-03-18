@@ -903,7 +903,6 @@ dependencies = [
  "ockam",
  "ockam_core",
  "ockam_router",
- "ockam_vault",
  "rand 0.7.3",
  "serde",
  "serde_bare",
