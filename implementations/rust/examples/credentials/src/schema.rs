@@ -1,4 +1,4 @@
-use ockam::{CredentialSchema, CredentialAttributeSchema, SECRET_ID, CredentialAttributeType};
+use ockam::{CredentialAttributeSchema, CredentialAttributeType, CredentialSchema, SECRET_ID};
 
 pub fn example_schema() -> CredentialSchema {
     CredentialSchema {
