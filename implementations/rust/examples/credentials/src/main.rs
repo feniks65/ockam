@@ -3,7 +3,6 @@ use crate::issuer::{start_issuer, Issuer};
 use crate::verifier::start_verifier;
 use ockam::{CredentialIssuer, Result};
 use ockam_node::Context;
-use std::net::SocketAddr;
 use structopt::StructOpt;
 
 mod holder;

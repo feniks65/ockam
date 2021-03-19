@@ -4,7 +4,6 @@ use ockam::{
 };
 
 use crate::message::CredentialMessage;
-use crate::DEFAULT_ISSUER_PORT;
 use ockam_transport_tcp::{self as tcp, TcpRouter};
 use std::net::SocketAddr;
 
@@ -29,14 +28,12 @@ impl Worker for Holder {
 
         router.register(&pair).await?;
 
-        let new_credential_connection = CredentialMessage::CredentialConnection;
-
         // Send a New Credential Connection message
         ctx.send_message(
             Route::new()
                 .append(format!("1#{}", issuer))
                 .append("issuer"),
-            new_credential_connection,
+            CredentialMessage::CredentialConnection,
         )
         .await
     }
