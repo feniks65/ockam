@@ -9,12 +9,35 @@ use ockam_transport_tcp::TcpRouter;
 use crate::message::CredentialMessage;
 use crate::message::CredentialMessage::{CredentialOffer, CredentialResponse};
 use crate::schema::example_schema;
-use crate::DEFAULT_PORT;
+use crate::DEFAULT_ISSUER_PORT;
 use std::collections::BTreeMap;
 
-struct Issuer {
+pub struct Issuer {
     credential_issuer: CredentialIssuer,
     schema: CredentialSchema,
+}
+
+impl Issuer {
+    pub fn default_address() -> SocketAddr {
+        Issuer::on("127.0.0.1", DEFAULT_ISSUER_PORT)
+    }
+
+    pub fn on<S: ToString>(host: S, port: usize) -> SocketAddr {
+        format!("{}:{}", host.to_string(), port).parse().unwrap()
+    }
+
+    pub fn on_or_default<S: ToString>(host: Option<S>) -> SocketAddr {
+        if let Some(host) = host {
+            let host = host.to_string();
+            if let Some(_) = host.find(":") {
+                host.parse().unwrap()
+            } else {
+                Issuer::on(host, DEFAULT_ISSUER_PORT)
+            }
+        } else {
+            Issuer::default_address()
+        }
+    }
 }
 
 #[async_worker]
@@ -68,11 +91,7 @@ pub async fn start_issuer(
     signing_key: Option<String>,
     port: Option<usize>,
 ) -> ockam::Result<()> {
-    let port = if let Some(port) = port {
-        port
-    } else {
-        DEFAULT_PORT
-    };
+    let port = port.unwrap_or(DEFAULT_ISSUER_PORT);
 
     let local_tcp: SocketAddr = format!("0.0.0.0:{}", port)
         .parse()

@@ -4,7 +4,7 @@ use ockam::{
 };
 
 use crate::message::CredentialMessage;
-use crate::DEFAULT_PORT;
+use crate::DEFAULT_ISSUER_PORT;
 use ockam_transport_tcp::{self as tcp, TcpRouter};
 use std::net::SocketAddr;
 
@@ -90,16 +90,8 @@ impl Worker for Holder {
     }
 }
 
-pub async fn start_holder(ctx: Context, issuer: String) -> ockam::Result<()> {
+pub async fn start_holder(ctx: Context, issuer: SocketAddr) -> ockam::Result<()> {
     let holder = CredentialHolder::new();
-
-    let issuer: SocketAddr = if issuer.contains(':') {
-        // Host and port
-        issuer.parse().unwrap()
-    } else {
-        // Host only
-        format!("{}:{}", issuer, DEFAULT_PORT).parse().unwrap()
-    };
 
     ctx.start_worker(
         "holder",
