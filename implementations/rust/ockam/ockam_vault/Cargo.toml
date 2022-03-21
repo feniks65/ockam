@@ -29,6 +29,6 @@ curve25519-dalek = "3.0"
 ed25519-dalek = "1.0"
 hkdf = "0.10"
 rand = "0.7"
-sha2 = "0.9"
+sha2 = "0.10"
 x25519-dalek = "1.0"
 zeroize = { version = "1.1", features = ["zeroize_derive"] }
